@@ -1468,6 +1468,7 @@ impl Workspace {
                                 "session-{index}-{}",
                                 session.session_id
                             )))
+                            .relative()
                             .flex()
                             .items_center()
                             .gap(px(4.))
@@ -1501,13 +1502,22 @@ impl Workspace {
                                 }),
                             )
                             // Row actions, shown while the pointer is on the row.
+                            // They overlay the row's right edge instead of taking
+                            // space: a display toggle (hidden/flex) between GPUI's
+                            // prepaint and paint passes panics ("must call prepaint
+                            // before paint") the moment group-hover flips it, so the
+                            // strip is always laid out and hides by visibility only —
+                            // the activity mark still hugs the row's right edge.
                             .child(
                                 div()
-                                    // hidden, not invisible: the actions reserve no
-                                    // space, so the activity mark hugs the row's right
-                                    // edge; hovering slides them in, shrinking the label.
-                                    .hidden()
-                                    .when(hover, |d| d.group_hover("session-row", |d| d.flex()))
+                                    .absolute()
+                                    .top(px(4.))
+                                    .right(px(2.))
+                                    .flex()
+                                    .gap(px(4.))
+                                    .bg(host_surface.blend(theme.overlay(0.06)))
+                                    .invisible()
+                                    .when(hover, |d| d.group_hover("session-row", |d| d.visible()))
                                     .child(
                                         small_icon_button(
                                             SharedString::from(format!(
@@ -1611,6 +1621,7 @@ impl Workspace {
                                 .id(SharedString::from(format!("side-tab-{window_id}")))
                                 .group("side-tab")
                                 .top(offset)
+                                .relative()
                                 .flex()
                                 .items_center()
                                 .gap(px(8.))
@@ -1681,12 +1692,21 @@ impl Workspace {
                                 .when(selected, |d| {
                                     d.child(
                                         div()
-                                            // hidden, not invisible: the close button
-                                            // reserves no space, so the selected tab's
-                                            // activity mark lines up with the others.
-                                            .hidden()
+                                            // Overlay, not display toggle: hidden/flex
+                                            // flips panic GPUI between its passes when
+                                            // group-hover fires, so like the session
+                                            // rows this is always laid out, absolute,
+                                            // and revealed by visibility only. The
+                                            // selected tab's activity mark keeps its
+                                            // right edge; the button covers it while
+                                            // hovered.
+                                            .absolute()
+                                            .top(px(4.))
+                                            .right(px(2.))
+                                            .bg(host_surface.blend(active_fill))
+                                            .invisible()
                                             .when(hover, |d| {
-                                                d.group_hover("side-tab", |d| d.flex())
+                                                d.group_hover("side-tab", |d| d.visible())
                                             })
                                             .child(
                                                 small_icon_button(
