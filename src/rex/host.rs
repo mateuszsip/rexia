@@ -291,6 +291,11 @@ impl PaneHandle {
         self.model.lock().expect("pane model").clone()
     }
 
+    /// Take the text a program copied (OSC 52), for the UI to put on the clipboard.
+    pub fn take_clipboard(&self) -> Option<String> {
+        self.model.lock().expect("pane model").clipboard.take()
+    }
+
     /// Ask the stream something and wait for the answer.
     pub async fn ask<T>(&self, build: impl FnOnce(oneshot::Sender<T>) -> PaneCommand) -> Option<T> {
         let (reply, answer) = oneshot::channel();

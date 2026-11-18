@@ -1255,6 +1255,16 @@ mod tests {
     }
 
     #[test]
+    fn osc52_copy_is_collected() {
+        let mut state = stream_from(b"", 10, 2);
+        state.feed(b"\x1b]52;c;aGVsbG8gd29ybGQ=\x1b\\").unwrap();
+        assert_eq!(
+            state.take_events(),
+            vec![TermEvent::Clipboard("hello world".into())]
+        );
+    }
+
+    #[test]
     fn local_theme_overrides_server_theme() {
         let mut state = stream_from(b"x", 10, 2);
         state

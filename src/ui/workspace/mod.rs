@@ -705,6 +705,12 @@ impl Workspace {
                 self.panes.insert(key, pane);
             }
             let pane = &self.panes[&shown];
+            // A program copied text (OSC 52): put it on the system clipboard.
+            if let Some(text) = pane.read(cx).handle().and_then(|handle| handle.take_clipboard())
+                && !text.is_empty()
+            {
+                cx.write_to_clipboard(gpui::ClipboardItem::new_string(text));
+            }
             pane.update(cx, |pane, cx| {
                 if pane.changed() {
                     cx.notify();
