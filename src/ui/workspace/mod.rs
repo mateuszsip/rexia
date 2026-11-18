@@ -1503,9 +1503,11 @@ impl Workspace {
                             // Row actions, shown while the pointer is on the row.
                             .child(
                                 div()
-                                    .flex()
-                                    .invisible()
-                                    .when(hover, |d| d.group_hover("session-row", |d| d.visible()))
+                                    // hidden, not invisible: the actions reserve no
+                                    // space, so the activity mark hugs the row's right
+                                    // edge; hovering slides them in, shrinking the label.
+                                    .hidden()
+                                    .when(hover, |d| d.group_hover("session-row", |d| d.flex()))
                                     .child(
                                         small_icon_button(
                                             SharedString::from(format!(
@@ -1679,9 +1681,12 @@ impl Workspace {
                                 .when(selected, |d| {
                                     d.child(
                                         div()
-                                            .invisible()
+                                            // hidden, not invisible: the close button
+                                            // reserves no space, so the selected tab's
+                                            // activity mark lines up with the others.
+                                            .hidden()
                                             .when(hover, |d| {
-                                                d.group_hover("side-tab", |d| d.visible())
+                                                d.group_hover("side-tab", |d| d.flex())
                                             })
                                             .child(
                                                 small_icon_button(
