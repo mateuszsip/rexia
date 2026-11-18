@@ -570,6 +570,19 @@ impl Workspace {
                 };
                 self.switch_host(next, cx);
             }
+            "client.host.next" | "client.host.previous" => {
+                // Silent with a single host: there is nothing to cycle to, and
+                // the sidebar already shows there is only one.
+                let count = self.hosts.len();
+                if count > 1 {
+                    let step = if name == "client.host.next" {
+                        1
+                    } else {
+                        count - 1
+                    };
+                    self.switch_host((self.active + step) % count, cx);
+                }
+            }
 
             "client.tab.new" => self.new_tab(cx),
             "client.tab.close" => {

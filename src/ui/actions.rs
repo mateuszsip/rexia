@@ -325,6 +325,20 @@ pub const ACTIONS: &[ActionDef] = &[
         "port forward forwarding tunnel localhost remote browser",
         []
     ),
+    action!(
+        "client.host.next",
+        "Next Host",
+        "Host",
+        "host remote machine server cycle forward switch",
+        []
+    ),
+    action!(
+        "client.host.previous",
+        "Previous Host",
+        "Host",
+        "host remote machine server cycle back switch",
+        []
+    ),
     // Tabs
     action!(
         "client.tab.new",
